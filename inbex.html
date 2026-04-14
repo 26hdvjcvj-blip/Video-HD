@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4K/8K Video Player - HD Pro</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: #000; 
+            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden;
+        }
+        .video-container {
+            width: 100vw; height: 100vh;
+            position: relative;
+        }
+        video {
+            width: 100%; height: 100%;
+            object-fit: contain;
+            background: #000;
+        }
+        .controls {
+            position: absolute; bottom: 20px; left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            padding: 15px 30px;
+            border-radius: 50px;
+            display: flex; gap: 15px; align-items: center;
+        }
+        .btn { 
+            background: #ff6b6b; color: white; 
+            border: none; padding: 12px 24px;
+            border-radius: 25px; cursor: pointer;
+            font-weight: bold; transition: all 0.3s;
+        }
+        .btn:hover { background: #ff5252; transform: scale(1.05); }
+        .quality-selector {
+            background: #333; color: white;
+            border: none; padding: 10px 20px;
+            border-radius: 20px; font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <video id="videoPlayer" controls preload="metadata" poster="poster.jpg">
+            <source src="your-4k-video.mp4" type="video/mp4">
+            <source src="your-8k-video.webm" type="video/webm">
+            Your browser doesn't support video.
+        </video>
+        
+        <div class="controls">
+            <button class="btn" onclick="playPause()">⏯️</button>
+            <button class="btn" onclick="toggleFullscreen()">⛶</button>
+            <select class="quality-selector" onchange="changeQuality(this.value)">
+                <option value="4k">4K (3840x2160)</option>
+                <option value="8k">8K (7680x4320)</option>
+                <option value="32k">32K Ultra</option>
+            </select>
+            <span id="time">00:00 / 00:00</span>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('videoPlayer');
+        const timeDisplay = document.getElementById('time');
+
+        // Play/Pause
+        function playPause() {
+            video.paused ? video.play() : video.pause();
+        }
+
+        // Fullscreen 8K
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                video.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Quality Switch (Simulated)
+        function changeQuality(quality) {
+            console.log(`Switching to ${quality}`);
+            // Real implementation would swap video sources
+        }
+
+        // Time Update
+        video.addEventListener('timeupdate', () => {
+            const current = formatTime(video.currentTime);
+            const duration = formatTime(video.duration);
+            timeDisplay.textContent = `${current} / ${duration}`;
+        });
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+        }
+
+        // Auto HD Quality
+        video.addEventListener('loadedmetadata', () => {
+            if (video.videoWidth >= 3840) {
+                console.log('🎬 4K+ Video Detected!');
+            }
+        });
+    </script>
+</body>
+</html>
